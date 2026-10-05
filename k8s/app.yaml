@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ai-incident-investigator
+  labels:
+    app: ai-incident-investigator
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ai-incident-investigator
+  template:
+    metadata:
+      labels:
+        app: ai-incident-investigator
+    spec:
+      containers:
+        - name: api
+          image: ai-incident-investigator:local
+          ports:
+            - containerPort: 8080
+          readinessProbe:
+            httpGet:
+              path: /v1/readyz
+              port: 8080
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: ai-incident-investigator
+spec:
+  selector:
+    app: ai-incident-investigator
+  ports:
+    - port: 80
+      targetPort: 8080
